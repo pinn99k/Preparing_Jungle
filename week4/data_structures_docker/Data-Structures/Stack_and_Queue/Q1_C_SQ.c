@@ -116,12 +116,38 @@ int main()
 
 void createQueueFromLinkedList(LinkedList *ll, Queue *q)
 {
-	/* add your code here */
+	ListNode *cur;
+	// q 자체가 포인터임
+	if (q != NULL){
+		removeAllItemsFromQueue(q);
+	}
+
+	int s = ll->size;
+	cur = ll->head;
+
+	while(cur != NULL){
+		enqueue(q, cur->item);
+		cur = cur->next;
+	}
 }
 
 void removeOddValues(Queue *q)
 {
-	/* add your code here */
+	int s;
+	// 헤드로 직접 추가할 수 있음
+	if (q == NULL){
+		return;
+	}
+	s = q->ll.size;
+	int val;
+	for (int i = 0; i < s; i++){
+		val = dequeue(q);
+		// 짝수면 다시 넣기
+		if ((val % 2) == 0){
+			enqueue(q,val);
+		}
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////
