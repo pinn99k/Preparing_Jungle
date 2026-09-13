@@ -107,9 +107,17 @@ int main()
 
 ////////////////////////////////////////////////////////////
 
+// 재귀적 역전
 void recursiveReverse(Queue *q)
 {
-/* add your code here */
+	if (isEmptyQueue(q)){
+		return;
+	}
+	int val = dequeue(q);
+
+	recursiveReverse(q);
+
+	enqueue(q, val);
 }
 
 //////////////////////////////////////////////////////////////////
