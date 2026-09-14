@@ -102,9 +102,43 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////
+
 int balanced(char *expression)
 {
-/* add your code here */
+	Stack temp;
+	temp.ll.head = NULL;
+	temp.ll.size = 0;
+	for (int i = 0; expression[i] != '\0'; i++){
+		char c = expression[i];
+
+		if (c == '[' || c == '{' || c == '('){
+			push(&temp, c);
+			continue;
+		}
+
+		char a = pop(&temp);
+		if (c == ']'){
+			if (a == '['){
+				continue;
+			}
+		}
+		if (c == '}'){
+			if (a == '{'){
+				continue;
+			}
+		}
+		if (c == ')'){
+			if (a == '('){
+				continue;
+			}
+		}
+		return 1;
+	}
+
+	if (isEmptyStack(&temp)){
+		return 0;
+	}
+	return 1;
 }
 
 ////////////////////////////////////////////////////////////
