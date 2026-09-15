@@ -99,12 +99,23 @@ int main()
 //////////////////////////////////////////////////////////////////////////////////
 
 int countOneChildNodes(BTNode *node)
-
 {
-    /* add your code here */
+    // 값이 있으면 1 없으면 0을 리턴
+    // 왼쪽 오른쪽의 합이 1이면 1을 더해서 리턴
+    if (node == NULL){
+        return 0;
+    }
+    if (node->left == NULL && node -> right == NULL){
+        return 0;
+    }
+    if (node->left ==NULL || node->right ==NULL){
+        return (1 + countOneChildNodes(node->left)+countOneChildNodes(node->right));
+    }
+    
+    return (countOneChildNodes(node->left)+countOneChildNodes(node->right));
 }
 
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////// 
 
 BTNode *createBTNode(int item)
 {
