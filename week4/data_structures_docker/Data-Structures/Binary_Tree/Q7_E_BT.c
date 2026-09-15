@@ -102,7 +102,21 @@ int main()
 
 int smallestValue(BTNode *node)
 {
-	/* add your code here */
+    // 트리 자체가 없을경우
+    if (node == NULL){
+        return 0;
+    }
+    int smallest = node->item;
+    if (node->left != NULL){
+        int left = smallestValue(node->left);
+        smallest = left < smallest ? left : smallest;
+    }
+    if (node->right != NULL){
+        int right = smallestValue(node->right);
+        smallest = right < smallest ? right : smallest;
+    }
+
+    return smallest;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
