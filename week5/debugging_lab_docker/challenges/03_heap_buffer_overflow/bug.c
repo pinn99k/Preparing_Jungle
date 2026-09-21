@@ -35,11 +35,6 @@
  * TODO: realloc 은 반드시 "새 용량(newcap)" 으로 호출하고, l->cap 갱신과 순서를 맞춰야 한다.
  *       (성장 로직은 '용량 필드'와 '실제 확보량'이 항상 같도록 유지해야 한다)
  */
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct {
-    int   *data;
     /* [Thinking Point]
      * 개수/크기를 담는 len, cap 을 왜 int 가 아니라 size_t 로 선언할까?
      *   tip 1. size_t 는 "이 플랫폼에서 표현 가능한 가장 큰 객체 크기"를 담도록 만든
@@ -48,6 +43,16 @@ typedef struct {
      *          원소가 그보다 많아지거나 cap*sizeof(int) 계산이 커지면 int 는 오버플로된다.
      *   생각해보기: 크기를 int 로 두면 어떤 버그가 생길 수 있을까?
      */
+
+
+
+
+ #include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int   *data; // 데이터를 포인터로 가지고 있음
+
     size_t len;
     size_t cap;
 } IntList;
@@ -62,10 +67,10 @@ static void list_init(IntList *l) {
 static void list_ensure(IntList *l, size_t need) {
     if (need <= l->cap) return;
 
-    size_t newcap = l->cap ? l->cap * 2 : 8;
+    size_t newcap = l->cap ? l->cap * 2 : 8; // 이게 문제인가 -> 아니였음
     while (newcap < need) newcap *= 2;
 
-    int *p = realloc(l->data, l->cap * sizeof(int));
+    int *p = realloc(l->data, newcap * sizeof(int)); // 바꾸기 전의 l->cap 을 사용하고 있었음
     if (!p) { perror("realloc"); free(l->data); exit(1); }
 
     l->data = p;
@@ -73,7 +78,7 @@ static void list_ensure(IntList *l, size_t need) {
 }
 
 static void list_push(IntList *l, int x) {
-    if (l->len == l->cap) list_ensure(l, l->cap + 1);
+    if (l->len == l->cap) list_ensure(l, l->cap + 1); // 혹싀 1 씩 늘리는게 문제인가요
     l->data[l->len++] = x;
 }
 
@@ -95,7 +100,8 @@ int main(void) {
 
     const int N = 2000000;
     for (int i = 0; i < N; i++) {
-        list_push(&l, i % 100);        
+        // N = 2000000 i = 16
+        list_push(&l, i % 100); // 여기서 문제가 터짐      
     }
 
     printf("len=%zu cap=%zu sum=%lld\n", l.len, l.cap, list_sum(&l));

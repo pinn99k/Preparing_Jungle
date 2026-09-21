@@ -106,8 +106,15 @@ static void screen_add(Screen *s, Widget *w) {
 
 static void screen_dispatch(Screen *s, int code) {
     for (int i = 0; i < s->count; i++) {
+        if(s->items[i] == NULL){
+            continue;
+        }
         Widget *w = s->items[i];
         w->vtbl->on_event(w, code); // dialog_on_event 호출
+        if(w -> closed == 1){
+            widget_destroy(w);
+            s->items[i] = NULL;
+        }
     }
 }
 
@@ -157,19 +164,13 @@ int main(void) {
 
     /* TODO 닫힌(closed) 위젯을 여기서 정리(free + 해당 슬롯 NULL)할 필요가 있음 */
     // 1번 인덱스를 닫아야 함
-    for (int i = 0; i < s.count; i++){
-        Widget *w = s.items[i];
-        if(w->closed == 1){
-            widget_destroy(w);
-            s.items[i] = NULL;
-        }
-    }
+
 
     char *status = app_build_status("dialog closed");
     printf("%s\n", status);
 
     printf("frame 2:\n");
-    screen_render(&s);           
+    screen_render(&s);        
 
     free(status);
     for (int i = 0; i < s.count; i++) free(s.items[i]);
