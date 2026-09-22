@@ -39,6 +39,28 @@
  * TODO: 소유권은 한 곳만 갖게 한다. 예) by_id 를 "소유 인덱스"로 정하고 여기서만 해제,
  *       by_name 은 "관찰용(빌려온) 인덱스"로 두어 절대 free 하지 않는다.
  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,11 +90,10 @@ static Rec *rec_new(int id, const char *name) {
 static void directory_add(Directory *d, int id, const char *name) {
     Rec *r = rec_new(id, name);
     d->by_id[d->count]   = r;
-    d->by_name[d->count] = r;      /* 같은 포인터를 두 인덱스에 함께 등록 */
+    d->by_name[d->count] = r;
     d->count++;
 }
 
-/* 이름 순 인덱스를 사전순으로 정렬(포인터만 재배치, 객체는 공유 그대로) */
 static void directory_sort_by_name(Directory *d) {
     for (int i = 0; i < d->count; i++) {
         for (int j = i + 1; j < d->count; j++) {
@@ -102,10 +123,12 @@ static void directory_dump(Directory *d) {
 static void directory_free(Directory *d) {
     for (int i = 0; i < d->count; i++) {
         free(d->by_id[i]->name);
-        free(d->by_id[i]);                 
+        free(d->by_id[i])
     }
     for (int i = 0; i < d->count; i++) {
-        free(d->by_name[i]);               
+        //free(d->by_name[i]);
+        // 얘가 네임을 두번 free 하고 있었음
+        // 가르키는게 둘 다 Rec 라서 free를 두번하면 안됨
     }
     d->count = 0;
 }
@@ -124,7 +147,7 @@ int main(void) {
     Rec *r = find_by_id(&dir, 2);
     if (r) printf("lookup id=2 -> %s\n", r->name);
 
-    directory_free(&dir);                  
+    directory_free(&dir); // 해제하다 문제가 생김             
     printf("done\n");
     return 0;
 }

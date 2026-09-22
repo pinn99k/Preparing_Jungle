@@ -31,6 +31,21 @@
  * TODO: cfg_get() 의 NULL 반환을 반드시 검사하라. 없는 키는 기본값("")으로 대체하거나
  *       명시적 오류로 처리한다("사용 전에 검사" 원칙).
  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

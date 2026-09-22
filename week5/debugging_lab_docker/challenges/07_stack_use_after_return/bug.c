@@ -75,15 +75,14 @@ static void view_set(LineView *out, char **arr, int n) {
 }
 
 static void split_lines(LineView *out, char *text) {
-    char *parts[MAX_LINES];              
     int n = 0;
 
-    for (char *ln = strtok(text, "\n"); ln && n < MAX_LINES; ln = strtok(NULL, "\n"))
-        parts[n++] = ln;
+    for (char *ln = strtok(text, "\n"); ln && n < MAX_LINES; ln = strtok(NULL, "\n")) // 얘가 문제
+        out->lines[n++] = ln;
+    
+    out->count = n;
 
-    view_set(out, parts, n);      
-
-    /* TODO 상기 코드를 수정하여 결과를 호출자가 준 out 에 직접 채운다(값 반환 아님, 지역 주소 반환 아님). */       
+    /* TODO 상기 코드를 수정하여 결과를 호출자가 준 out 에 직접 채운다(값 반환 아님, 지역 주소 반환 아님). */
 }
 
 static void warm_stack(void) {
@@ -95,8 +94,10 @@ static void warm_stack(void) {
 
 int main(void) {
     char text[] = "alpha\nbeta\ngamma";
+    char *arr[MAX_LINES];
 
     LineView v;
+    view_set(&v, arr, 0);
     split_lines(&v, text);               
     warm_stack();                        
 
