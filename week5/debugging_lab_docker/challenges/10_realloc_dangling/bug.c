@@ -41,10 +41,10 @@
 
 #define MAX_UNDO 8
 typedef struct {
-    int   *data;
+    int   *data; // 힙 공간에 데이터를 가르킴
     size_t len, cap;
-    int   *clipboard;       
-    int   *undo[MAX_UNDO];   
+    int   *clipboard;
+    int   *undo[MAX_UNDO]; // 스냅샷마다 따로 빌린 복사본 칸을 가리킴
     int    undo_n;
 } EditBuffer;
 
@@ -56,12 +56,21 @@ static void eb_init(EditBuffer *e) {
     if (!e->data) { perror("malloc"); exit(1); }
     /* data 바로 뒤에 놓이는 별도 할당. data 가 힙 맨 끝(top)이 아니게 되어
        이후 realloc 이 제자리 확장 대신 '이동'을 택하게 만든다(→ 옛 블록 해제). */
-    e->clipboard = malloc(e->cap * sizeof(int));
-    if (!e->clipboard) { perror("malloc"); exit(1); }
+    e->clipboard = malloc(e->cap * sizeof(int)); // realloc 을 할 때 뒷 공간이 없다면 메모리를 해제하고 넉넉한 공간으로 이동해서 확장한다
+    if (!e->clipboard) { perror("malloc"); exit(1); } // 클립보드가 비어있다면 메모리 에러
 }
 
 static void eb_snapshot(EditBuffer *e) {
-    if (e->undo_n < MAX_UNDO) e->undo[e->undo_n++] = e->data;
+    if (e->undo_n >= MAX_UNDO) return;
+
+    int *copy = malloc(e->len * sizeof(*(e->data)));
+    if (!copy) { perror("malloc"); exit(1); }
+
+    for (size_t i = 0; i < e->len; i++){
+        copy[i] = e->data[i];
+    }
+
+    e->undo[e->undo_n++] = copy;
 }
 
 static void eb_grow(EditBuffer *e, size_t need) {
@@ -82,7 +91,7 @@ static void eb_free(EditBuffer *e) {
     free(e->data);
     free(e->clipboard);
     for (int i = 0; i < e->undo_n; i++) {
-        free(e->undo[i]);           
+        free(e->undo[i]);
     }
     e->undo_n = 0;
     e->data = NULL;

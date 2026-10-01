@@ -47,9 +47,11 @@ static char *skip_ws(char *s) {
 
 static void parse_headers(char *text, Headers *h) {
     for (char *line = strtok(text, "\n"); line != NULL; line = strtok(NULL, "\n")) {
-        char *colon = strchr(line, ':');   
+        char *colon = strchr(line, ':');
+        
+        if(*colon == NULL) return; // 수정사항
 
-        *colon = '\0';                    
+        *colon = '\0'; // 여기서 헤더의 값이 틀림
         char *key = line;
         char *val = skip_ws(colon + 1);
 
